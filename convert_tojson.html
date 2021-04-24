@@ -1,0 +1,53 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<div id="demo"></div>
+<script>var data = (function() {
+    var json = null;
+    $.ajax({
+      'async': false,
+      'global': false,
+      'url': "/expenditure_grouped_v2_operating.json",
+      'dataType': "json",
+      'success': function(data) {
+        json = data;
+      }
+    });
+    return json;
+  })();
+
+  //console.log(data);
+
+var newData = { name :"root", children : [] },
+    levels = ["sector","ministry"];
+
+var depthCursor =0;
+// For each data row, loop through the expected levels traversing the output tree
+data.forEach(function(d){
+    var depthCursor = newData.children;
+    levels.forEach(function( property, depth )
+    {
+        var index;
+        depthCursor.forEach(function(child,i)
+        {
+            if ( d[property] == child.name ) 
+                index = i;
+        });
+
+        if ( isNaN(index) ) 
+        {
+            depthCursor.push({name : d[property], children : []});
+            index = depthCursor.length - 1;
+        }
+
+        depthCursor = depthCursor[index].children;
+
+        if ( depth === levels.length - 1 )
+        {
+            depthCursor.push({ type : d.type, amount : d.amount});
+            //depthCursor.push({ });
+        }
+    });
+});
+
+
+document.getElementById("demo").innerHTML = JSON.stringify(newData);
+</script>

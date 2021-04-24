@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+   
+   #tooltip {
+    position:absolute;
+    background-color: rgba(255,255,255, 0.9);
+    width: 200px;
+    height: auto;
+    text-align:center;
+    margin-top:15px;}
+
+body {
+  font-family: 'Raleway',sans-serif;
+  position: relative;
+}
+
+ html {
+   background-color: lightyellow;
+ }
+
+ p {
+  font-size: 15px; 
+  font-family: 'Raleway',sans-serif;
+  
+ }
+h1 {
+  font-family: 'Raleway',sans-serif;
+}
+#ed {
+  color: #66c0c6;
+}
+
+#ga {
+  color: #6690c6;
+}
+#sd {
+  color: #66c69c;
+}
+
+#ser {
+  color: #c66c66;
+}
+#credits {
+  font-size:10px;
+}
+</style>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-color.v2.min.js"></script>
+<script src="https://d3js.org/d3-interpolate.v2.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
+<!-- Create a div where the graph will take place -->
+<title>Assignment 5: FY2021 overview of the government expenditure</title>
+<center><h1>FY2021 overview of the government expenditure*</h1>
+<p>Select the type of budget below that is divided into sectors and hover over each blocks to see the ministry and the amount of budget.</p>
+<!-- <button class="abutton" value ="Update" onclick="development()" =>Development Budget</button>
+<button class="mbutton" value ="Update" onclick="operating()" =>Operating Budget</button> -->
+<input class="rdo_btn" type="radio" name="choice" value="dev" checked="on" onclick="development()"> Development
+<input class="rdo_btn"type="radio" name="choice" value="operating" onclick="operating()"> Operating
+<p>Sector legend: <span id ="ed">Economic Development</span>, <span id="ga">Government Administration</span>, <span id="sd">Social Development</span> and <span id="ser">Security and External Relations</span></p>
+<div id="my_dataviz"></div></center>
+<div id="tooltip"></div>
+<center><p id="credits">*Data from <a href="www.data.gov.sg">data.gov.sg</a></p></center>
+<script>
+var margin = {top: 5, right: 5, bottom: 5, left: 3},
+      width = 1045 - margin.left - margin.right,
+      height = 545 - margin.top - margin.bottom;
+    
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    
+    // read json data
+    d3.json("cleaned_json_assignment5_depend.json", function(data) {
+    
+      // Give the data to this cluster layout:
+      var root = d3.hierarchy(data).sum(function(d){return d.amount}) // Here the size of each leave is given in the 'value' field in input data
+
+      
+      // Then d3.treemap computes the position of each element of the hierarchy
+      d3.treemap()
+        .size([width, height])
+        .paddingTop(1)
+        .paddingRight(0.8)
+        .paddingInner(0)      // Padding between each rectangle
+        //.paddingOuter(6)
+        //.padding(20)
+        (root)
+    
+      // prepare a color scale
+      var color = d3.scaleOrdinal()
+        .domain(["Economic Development","Government Administration", "Social Development", "Security and External Relations"])
+        .range(["#66c0c6","#6690c6","#66c69c","#c66c66"])
+    
+      // And a opacity scale
+      var opacity = d3.scaleLinear()
+        .domain([10, 30])
+        .range([.5,1])
+    
+      // use this information to add rectangles:
+      svg
+        .selectAll("rect")
+        .data(root.leaves())
+        .enter()
+        .append("rect")
+          .attr('x', function (d) { return d.x0; })
+          .attr('y', function (d) { return d.y0; })
+          .attr('width', function (d) { return d.x1 - d.x0; })
+          .attr('height', function (d) { return d.y1 - d.y0 ; })
+          .style("stroke", "black")
+          .style("fill", function(d){
+            //console.log(d.parent.parent.data.name);
+            return color(d.parent.parent.data.name) } )
+          .style("opacity", function(d){ return opacity(d.amount)})
+          .on("mouseover", function(d) {
+        d3.select("#tooltip")
+    .text(d.parent.data.name +": "+ d.data.amount)
+    .style("left", (event.pageX) + "px")
+    .style("top", (event.pageY) + "px")
+          })
+          .on("mouseout", function(d) {		
+            d3.select("#tooltip")
+            .text(""); })
+
+     })
+
+
+function development() {
+  var svg = d3.select("#my_dataviz")
+  svg.selectAll("*").remove();
+    // set the dimensions and margins of the graph
+    var margin = {top: 5, right: 5, bottom: 5, left: 3},
+      width = 1045 - margin.left - margin.right,
+      height = 545 - margin.top - margin.bottom;
+    
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    
+    // read json data
+    d3.json("expediture_grouped_v2_depend.json", function(data) {
+    
+      // Give the data to this cluster layout:
+      var root = d3.hierarchy(data).sum(function(d){return d.amount}) // Here the size of each leave is given in the 'value' field in input data
+
+      
+      // Then d3.treemap computes the position of each element of the hierarchy
+      d3.treemap()
+        .size([width, height])
+        .paddingTop(1)
+        .paddingRight(1)
+        .paddingInner(0.5)      // Padding between each rectangle
+        //.paddingOuter(6)
+        //.padding(20)
+        (root)
+    
+      // prepare a color scale
+      var color = d3.scaleOrdinal()
+        .domain(["Economic Development","Government Administration", "Social Development", "Security and External Relations"])
+        .range(["#66c0c6","#6690c6","#66c69c","#c66c66"])
+    
+      // And a opacity scale
+      var opacity = d3.scaleLinear()
+        .domain([10, 30])
+        .range([.5,1])
+    
+      // use this information to add rectangles:
+      svg
+        .selectAll("rect")
+        .data(root.leaves())
+        .enter()
+        .append("rect")
+          .attr('x', function (d) { return d.x0; })
+          .attr('y', function (d) { return d.y0; })
+          .attr('width', function (d) { return d.x1 - d.x0; })
+          .attr('height', function (d) { return d.y1 - d.y0 ; })
+          .style("stroke", "black")
+          .style("fill", function(d){
+            //console.log(d.parent.parent.data.name);
+            return color(d.parent.parent.data.name) } )
+          .style("opacity", function(d){ return opacity(d.amount)})
+          .on("mouseover", function(d) {
+        d3.select("#tooltip")
+    .text(d.parent.data.name +": "+ d.data.amount)
+    .style("left", (event.pageX) + "px")
+    .style("top", (event.pageY) + "px")
+          })
+          .on("mouseout", function(d) {		
+            d3.select("#tooltip")
+            .text(""); })
+  
+    
+     })}
+     function operating() {
+      var svg = d3.select("#my_dataviz")
+      svg.selectAll("*").remove();
+    // set the dimensions and margins of the graph
+    var margin = {top: 5, right: 5, bottom: 5, left: 3},
+      width = 1045 - margin.left - margin.right,
+      height = 545 - margin.top - margin.bottom;
+    
+    // append the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+    
+    // read json data
+    d3.json("expenditure_grouped_v2_operating.json", function(data) {
+      // Give the data to this cluster layout:
+      var root = d3.hierarchy(data).sum(function(d){return d.amount}) // Here the size of each leave is given in the 'value' field in input data
+
+      
+      // Then d3.treemap computes the position of each element of the hierarchy
+      d3.treemap()
+        .size([width, height])
+        .paddingTop(1)
+        .paddingRight(1)
+        .paddingInner(0.5)      // Padding between each rectangle
+        //.paddingOuter(6)
+        //.padding(20)
+        (root)
+    
+      // prepare a color scale
+      var color = d3.scaleOrdinal()
+        .domain(["Economic Development","Government Administration", "Social Development", "Security and External Relations"])
+        .range(["#66c0c6","#6690c6","#66c69c","#c66c66"])
+    
+      // And a opacity scale
+      var opacity = d3.scaleLinear()
+        .domain([10, 30])
+        .range([.5,1])
+    
+      // use this information to add rectangles:
+      svg
+        .selectAll("rect")
+        .data(root.leaves())
+        .enter()
+        .append("rect")
+          .attr('x', function (d) { return d.x0; })
+          .attr('y', function (d) { return d.y0; })
+          .attr('width', function (d) { return d.x1 - d.x0; })
+          .attr('height', function (d) { return d.y1 - d.y0 ; })
+          .style("stroke", "black")
+          .style("fill", function(d){
+            //console.log(d.parent.parent.data.name);
+            return color(d.parent.parent.data.name) } )
+          .style("opacity", function(d){ return opacity(d.amount)})
+          .on("mouseover", function(d) {
+        d3.select("#tooltip")
+    .text(d.parent.data.name +": "+ d.data.amount)
+    .style("left", (event.pageX) + "px")
+    .style("top", (event.pageY) + "px")
+          })
+          .on("mouseout", function(d) {		
+            d3.select("#tooltip")
+            .text(""); })
+  
+    
+     })
+     }
+
+    </script>
