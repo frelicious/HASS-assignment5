@@ -120,7 +120,7 @@ var margin = {top: 5, right: 5, bottom: 5, left: 3},
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
+    .text(d.parent.data.name +": $"+ d.data.amount + " billion SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
@@ -192,7 +192,7 @@ function development() {
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
+    .text(d.parent.data.name +": $"+ d.data.amount + " billion SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
@@ -262,7 +262,7 @@ function development() {
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
+    .text(d.parent.data.name +": $"+ d.data.amount + " billion SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
