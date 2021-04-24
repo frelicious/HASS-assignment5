@@ -52,7 +52,7 @@ h1 {
 <script src="https://d3js.org/d3-scale-chromatic.v2.min.js"></script>
 <!-- Create a div where the graph will take place -->
 <title>Assignment 5: FY2021 overview of the government expenditure</title>
-<center><h1>FY2021 overview of the government expenditure (in billions SGD)*</h1>
+<center><h1>FY2021 overview of the government expenditure*</h1>
 <p>Select the type of budget below that is divided into sectors and hover over each blocks to see the ministry and the amount of budget.</p>
 <!-- <button class="abutton" value ="Update" onclick="development()" =>Development Budget</button>
 <button class="mbutton" value ="Update" onclick="operating()" =>Operating Budget</button> -->
@@ -120,7 +120,7 @@ var margin = {top: 5, right: 5, bottom: 5, left: 3},
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": "+ d.data.amount)
+    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
@@ -192,7 +192,7 @@ function development() {
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": "+ d.data.amount)
+    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
@@ -262,7 +262,7 @@ function development() {
           .style("opacity", function(d){ return opacity(d.amount)})
           .on("mouseover", function(d) {
         d3.select("#tooltip")
-    .text(d.parent.data.name +": "+ d.data.amount)
+    .text(d.parent.data.name +": $"+ d.data.amount + " billions SGD")
     .style("left", (event.pageX) + "px")
     .style("top", (event.pageY) + "px")
           })
